@@ -1,6 +1,10 @@
 # 통합 실행 보고 · 2026-11-12
 
-## 작업 위치와 보존
+## 현재 작업 위치
+
+사용자 요청에 따라 통합판을 `C:\Users\USER\etc\bioinfo\senior-health-claim-checker`의 `feature/ui` 브랜치로 옮겼다. 아래 사본 경로는 최초 통합 이력이다. 원본의 미추적 파일 13개는 동일성 확인 후 stash에 백업했고 통합 브랜치에 포함되어 있다. 기존 가상환경 설정도 백업한 뒤 PC의 OCR 패키지를 재사용하도록 연결했다.
+
+## 최초 작업 위치와 보존
 
 - 원본: `C:\Users\USER\etc\bioinfo\senior-health-claim-checker`
 - 통합 사본: `C:\Users\USER\Documents\Codex\2026-11-12\5-2026-11-18-ocr-streamlit\outputs\senior-health-claim-checker`

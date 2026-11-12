@@ -5,6 +5,8 @@
 
 ## 현재 PC에서 실행 (검증 환경: Windows / Python 3.13.14 / CPU)
 
+현재 작업 위치: `C:\Users\USER\etc\bioinfo\senior-health-claim-checker`. 브랜치: `feature/ui`.
+
 프로젝트 폴더에서 PowerShell로 한 줄씩 실행합니다.
 
 ```
@@ -12,8 +14,8 @@
 ```
 
 브라우저에서 http://127.0.0.1:8518 을 엽니다. 기존 8501 준비 화면과 구별하기 위해 8518을 사용합니다.
-이 납품 사본에는 `.venv`와 두 OCR 모델이 준비되어 있습니다. API 키 없이 실행합니다.
-현재 `.venv`는 이 PC의 기존 OCR 패키지를 `--system-site-packages`로 재사용하므로 다른 PC로 `.venv`를 복사하지 마세요.
+현재 저장소에는 `.venv`와 두 OCR 모델이 준비되어 있습니다. API 키 없이 실행합니다.
+현재 `.venv`는 기존 설정을 `pyvenv.before-integration.cfg`로 백업한 뒤 `include-system-site-packages = true`로 설정해 이 PC의 OCR 패키지를 재사용하므로 다른 PC로 `.venv`를 복사하지 마세요.
 
 ## 새 PC 설치와 최초 모델 준비
 
