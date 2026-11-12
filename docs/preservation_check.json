@@ -1,0 +1,54 @@
+[
+  {
+    "path": "data/processed/api_candidates_claims.csv",
+    "identical": true
+  },
+  {
+    "path": "data/processed/api_candidates_products.csv",
+    "identical": true
+  },
+  {
+    "path": "data/processed/registry_index.csv",
+    "identical": true
+  },
+  {
+    "path": "scripts/fetch_products.py",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S01_close.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S02_stronger.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S03_close.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S04_uncertain.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S05_uncertain.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S06_treatment.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/S07_uncertain.png",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/sample_phrases.csv",
+    "identical": true
+  },
+  {
+    "path": "data/synthetic/sample_ads/synthetic_cases.csv",
+    "identical": true
+  }
+]

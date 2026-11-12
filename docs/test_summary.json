@@ -1,0 +1,11 @@
+{
+  "status_pass": 20,
+  "product_pass": 17,
+  "candidate_pass": 17,
+  "tag_pass": 20,
+  "source_pass": 20,
+  "pass": 20,
+  "top1_pass": 17,
+  "product_denominator": 17,
+  "cases": 20
+}
