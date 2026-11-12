@@ -7,7 +7,7 @@ from src.products import search_candidates, product_by_id
 from src.compare import analyze_claim
 from src.ocr import read_text
 
-st.set_page_config(page_title='건강기능식품 광고 확인 도우미', page_icon='🔎', layout='wide')
+st.set_page_config(page_title='건강기능식품 광고 확인 도우미', layout='wide')
 from src.ui import page_style, hero, section, banner, product_meta, evidence_tag
 page_style()
 hero()
