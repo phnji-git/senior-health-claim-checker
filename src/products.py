@@ -100,6 +100,12 @@ def find_product_id(ad_text):
     return hit[0]["id"] if hit else None
 
 
+def report_numbers(text):
+    """문구 속 신고번호 후보(숫자 8자리 이상). '2026-000316813', '2026 000316813'처럼 끊어 적어도 하나로 본다.
+    부분 일치는 쓰지 않는다: 202600031681은 2026000316813과 다른 제품이다."""
+    return {re.sub(r'\D', '', m) for m in re.findall(r'\d[\d -]{6,}\d', str(text))}
+
+
 def search_candidates(ad_text, limit=10):
     """Return candidates only; similarity never establishes product identity."""
     ad = norm(ad_text)
@@ -108,10 +114,11 @@ def search_candidates(ad_text, limit=10):
     reviewed, others = load_products()
     hits = []
     bi = _bigrams(ad)
+    numbers = report_numbers(ad_text)
     for rows, threshold, min_len in [(reviewed, NAME_SIM_REVIEWED, MIN_NAME_LEN),
                                       (others, NAME_SIM_ALL, MIN_NAME_LEN_ALL)]:
         for row in rows:
-            exact_number = row['report_number'] and row['report_number'] in ad
+            exact_number = row['report_number'] in numbers
             if not exact_number and (len(row['norm']) < min_len or len(row['bi'] & bi) < BIGRAM_SHARE * len(row['bi'])):
                 continue
             hit = locate(ad, row['norm'])

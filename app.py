@@ -18,7 +18,12 @@ def clear_result():
 
 def clear_image():
     st.session_state.pop('ocr_result',None)
+    st.session_state.pop('ocr_running',None)
     clear_result()
+
+def start_ocr():
+    # 클릭 콜백은 다음 화면을 그리기 전에 실행되므로, OCR 중에는 버튼이 비활성으로 그려진다
+    st.session_state['ocr_running'] = True
 
 with st.container(key='input_card'):
     section(1,'어떤 광고를 보셨나요?','사진으로 시작해도, 문구를 직접 적어도 괜찮아요.')
@@ -49,12 +54,17 @@ with st.container(key='input_card'):
                 st.image(preview, caption='문구와 제품명을 확인해 주세요',width=580)
             except Exception:
                 st.warning('이미지 미리보기를 열 수 없습니다. 직접 입력으로 계속할 수 있습니다.')
-            if st.button('사진에서 글자 읽기'):
+            running = st.session_state.get('ocr_running', False)
+            st.button('사진에서 글자 읽기', on_click=start_ocr, disabled=running)
+            st.caption('처음 읽을 때는 1분 가까이 걸릴 수 있어요. 버튼은 한 번만 눌러 주세요.')
+            if running:
                 clear_result()
-                with st.spinner('사진의 글자를 읽고 있습니다…'):
+                with st.spinner('사진의 글자를 읽고 있습니다… 잠시만 기다려 주세요.'):
                     ocr = read_text(payload)
                 st.session_state['ocr_result'] = ocr
                 st.session_state['ad_text'] = ocr['text']
+                st.session_state['ocr_running'] = False
+                st.rerun()
             if 'ocr_result' in st.session_state:
                 ocr=st.session_state['ocr_result']
                 if ocr['status'] != 'ok':

@@ -9,13 +9,30 @@ from src.ocr import read_text
 from scripts.validate_integration import validate
 
 @pytest.mark.parametrize('text,tag',[
- ('홍삼정 스틱 면역력 증진 피로개선에 도움을 줄 수 없음','부정 표현'),
+ ('홍삼정 스틱 면역력 증진 피로개선에 도움을 줄 수 없음','반대·부정 문장'),
  ('홍삼정 스틱 100% 면역력 증진 피로개선에 도움을 줄 수 있음','과장'),
+ ('홍삼정 스틱 효과 100프로 보장','과장'),
+ ('홍삼정 스틱 효과 100프로 보장','단정 표현'),
+ ('홍삼정 스틱 혈압이 내려가요 고혈압 개선','질병명 언급'),
+ ('홍삼정 스틱 당뇨 치유 효과','질병 예방·치료'),
+ ('홍삼정 스틱 부작용 없이 면역력 증진 피로개선에 도움을 줄 수 있음','부작용 없음 주장'),
 ])
 def test_semantic_guards(text,tag):
     r=analyze_claim(text,'P001')
     assert r['status']=='needs_review' and tag in r['review_tags']
     assert any(e['tag']==tag and e['expressions'] for e in r['review_evidence'])
+
+@pytest.mark.parametrize('text',[
+ '홍삼정 스틱 부작용 없이 면역력 증진 피로개선에 도움을 줄 수 있음',
+ '홍삼정 스틱 걱정 없는 면역력 증진 피로개선에 도움을 줄 수 있음',
+])
+def test_benign_negation_not_flagged(text):
+    assert '반대·부정 문장' not in analyze_claim(text,'P001')['review_tags']
+
+def test_report_number_exact_match():
+    # 202600031681(다른 제품)은 2026000316813의 앞부분이지만 후보가 되면 안 된다
+    for q in ['2026000316813','신고번호 2026-000316813']:
+        assert [c['id'] for c in search_candidates(q)]==['P001']
 
 def test_selection_required():
     r=analyze_claim('홍삼정 스틱 면역력 증진')

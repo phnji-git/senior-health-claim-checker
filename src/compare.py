@@ -8,11 +8,20 @@ from src.products import locate, norm, product_by_id, search_candidates
 CLAIM_MATCH_SIM = 0.8   # 광고 기능 문구가 공식 문구에 이 비율 이상 들어 있으면 matched
 MIN_BLOCK = 2           # 한 글자씩 우연히 겹치는 것은 세지 않음
 WORD_SIM = 0.67         # OCR 오타 허용: 3글자 이상 표현어는 이 정도 비슷하면 같은 것으로 봄
-DISEASE_WORDS = ["치료", "예방", "완치", "약대신", "처방"]          # 공식 문구에 없으면 needs_review
+DISEASE_WORDS = ["치료", "예방", "완치", "치유", "약대신", "처방"]  # 공식 문구에 없으면 needs_review
 DISEASE_PATTERN = re.compile(r"병에(좋|도움|효과)")                 # "~병에 좋다"
+# 공식 문구에 없는 병·증상 이름. "암"처럼 한 글자는 다른 낱말에 섞이므로 붙여 쓰는 꼴로만 적는다.
+DISEASE_NAMES = ["고혈압", "혈압", "당뇨", "치매", "관절염", "골다공증", "백내장", "녹내장", "간염",
+                 "항암", "암예방", "암세포", "암환자", "심장병", "뇌졸중", "우울증", "불면증"]
 TAG_WORDS = {"무조건": "과장", "완벽": "과장", "확실": "단정 표현",
-             "책임": "단정 표현", "혈관청소": "혈관 청소·과장", "후기": "후기·체험담",
+             "책임": "단정 표현", "보장": "단정 표현", "틀림없": "단정 표현",
+             "혈관청소": "혈관 청소·과장", "후기": "후기·체험담",
              "먹고": "후기·체험담"}                                  # 점검 표시일 뿐 판정이 아님
+HUNDRED = r"100\s*(?:[%％]|프로|퍼센트)|백\s*퍼센트"                  # "100%", "100프로", "백 퍼센트"
+SIDE_EFFECT = re.compile(r"부작용(?:이|은|도|전혀|걱정|하나)*(?:없|제로|zero|0)")  # 정리된 글자 기준
+# "없/않"이 들어가도 반대 뜻이 아닌 말. 반대·부정 문장 탐지에서 뺀다. (틀림없 = 단정 표현으로 따로 잡음)
+NEG_OK = ["걱정없", "부담없", "상관없", "빠짐없", "아낌없", "끊임없", "남김없", "어김없", "틀림없", "못지않"]
+NEG_PATTERN = r"없|않|아니|못|불가|안됨|안되|안돼"
 HEALTH_WORDS = ["면역력", "항산화", "영양제", "건강기능식품", "식약처인증", "기능성"]
 NOTICE = re.compile(r"\(?\s*시험용.*$")                             # 맨 끝 "시험용 가상 광고입니다 (실제 광고 아님)"
 # ─────────────────────────────────────────────────────────
@@ -54,6 +63,14 @@ def _has_word(ad, word):
                for i in range(max(len(ad) - n + 1, 1)))
 
 
+def _strip_benign(text):
+    """정리된 글자에서 '부작용 없음'과 반대 뜻이 아닌 '없/않' 낱말을 지운다."""
+    text = SIDE_EFFECT.sub("", text)
+    for w in NEG_OK:
+        text = text.replace(w, "")
+    return text
+
+
 def _coverage(part, official):
     """광고 문구(part)의 글자 중 공식 문구에 같은 순서로 들어 있는 비율."""
     if not part:
@@ -92,11 +109,16 @@ def analyze_claim(ad_text, product_id=None):
     disease = [w for w in DISEASE_WORDS if w not in official_all and _has_word(ad, w)]
     if DISEASE_PATTERN.search(ad) and "병에" not in official_all:
         disease.append("병에 좋다")
+    names = [w for w in DISEASE_NAMES if w in ad and w not in official_all]
     tags = list(dict.fromkeys(disease + [t for k, t in TAG_WORDS.items() if k in ad]))
-    if re.search(r'100\s*[%％]|백\s*퍼센트', clean):
+    if names:
+        tags.append('질병명 언급')
+    if re.search(HUNDRED, clean):
         tags.append('과장')
-    if re.search(r'없|않|아니|못|불가|안됨|안되|안돼', rest):
-        tags.append('부정 표현')
+    if SIDE_EFFECT.search(ad):
+        tags.append('부작용 없음 주장')
+    if re.search(NEG_PATTERN, _strip_benign(rest)):
+        tags.append('반대·부정 문장')
     if any(w in ad for w in ['완전','하루만에','확좋아','즉시','반드시']):
         tags.append('과장')
     if '약대신' in ad:
@@ -120,16 +142,20 @@ def analyze_claim(ad_text, product_id=None):
     result['product_candidates'] = candidates
     evidence=[]
     patterns = {
-        '부정 표현':r'[^,.!?\n]{0,16}(?:없\w*|않\w*|아니\w*|못\w*|불가|안됨|안되\w*|안돼\w*)',
-        '과장':r'100\s*[%％]|백\s*퍼센트|무조건|완벽|완전|하루\s*만에|확\s*좋아\w*|즉시|반드시',
-        '단정 표현':r'확실\w*|책임\w*',
+        '반대·부정 문장':r'[^,.!?\n]{0,16}(?:없\w*|않\w*|아니\w*|못\w*|불가|안됨|안되\w*|안돼\w*)',
+        '과장':HUNDRED + r'|무조건|완벽|완전|하루\s*만에|확\s*좋아\w*|즉시|반드시',
+        '단정 표현':r'확실\w*|책임\w*|보장\w*|틀림\s*없\w*',
         '혈관 청소·과장':r'혈관\s*청소',
         '후기·체험담':r'후기|먹고',
         '약 대체':r'약\s*대신',
-        '질병 예방·치료':r'치료\w*|예방\w*|완치\w*|처방\w*',
+        '질병 예방·치료':r'치료\w*|예방\w*|완치\w*|치유\w*|처방\w*',
+        '질병명 언급':'|'.join(r'\s*'.join(map(re.escape, w)) for w in names) or r'(?!)',
+        '부작용 없음 주장':r'부작용[^,.!?\n]{0,8}?(?:없\w*|제로|zero|0)',
     }
     for tag in tags:
         matches=re.findall(patterns.get(tag,r'(?!)'),clean)
-        evidence.append({'tag':tag,'expressions':list(dict.fromkeys(matches))})
+        if tag == '반대·부정 문장':  # 부작용 없음·걱정 없는 같은 구절은 근거에서 뺀다
+            matches = [m for m in matches if re.search(NEG_PATTERN, _strip_benign(norm(m)))]
+        evidence.append({'tag':tag,'expressions':list(dict.fromkeys(m.strip() for m in matches))})
     result['review_evidence']=evidence
     return result
