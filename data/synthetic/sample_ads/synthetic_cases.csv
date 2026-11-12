@@ -1,0 +1,21 @@
+﻿case_id,group,ad_text,expected_status,expected_product_id,expected_tag,expected_source,case_type
+S01,close,"홍삼정 스틱 면역력 증진, 피로개선에 도움을 줄 수 있음",matched,P101,,official_claims P101,synthetic_example
+S02,stronger,세이헬스 루테인 눈 건강 확실히 책임집니다! 황반색소밀도 유지,matched,P126,단정 표현,official_claims P126,synthetic_example
+S03,close,오메가3이지 혈행 개선·건조한 눈 개선에 도움을 줄 수 있음,matched,P117,,official_claims P117,synthetic_example
+S04,uncertain,비타하루 면역 젤리 먹는 순간 면역력 강화! 식약처 인증 영양제,no_product,,,없음,synthetic_example
+S05,uncertain,"눈번쩍 시력회복 환 시력 회복, 노안 개선 건강기능식품",no_product,,,없음,synthetic_example
+S06,treatment,홍삼정 스틱 당뇨·감기 예방에 탁월 먹으면 치료됩니다,needs_review,P101,질병 예방·치료,official_claims P101,synthetic_example
+S07,uncertain,세이헬스 루테인 ★★★★★ 구매 후기 먹고 두 달 만에 눈이 좋아졌어요!,needs_review,P126,후기·체험담,official_claims P126,synthetic_example
+T08,close,세이헬스 루테인 노화로 감소될 수 있는 황반색소밀도를 유지하여 눈 건강에 도움을 줄 수 있음,matched,P126,,official_claims P126,synthetic_example
+T09,close,뼈건강 칼마디아 칼슘 마그네슘 비타민D 아연 뼈와 치아 형성에 필요,matched,P122,,official_claims P122,synthetic_example
+T10,close,"보령 이너락 핑크 유산균 유산균 증식 및 유해균 억제, 배변활동 원활, 장 건강에 도움을 줄 수 있음",matched,P106,,official_claims P106,synthetic_example
+T11,stronger,오메가3이지 혈관 청소! 혈행 완벽 개선,matched,P117,혈관 청소·과장,official_claims P117,synthetic_example
+T12,stronger,홍삼정 스틱 먹으면 면역력 100% 올라갑니다,matched,P101,과장,official_claims P101,synthetic_example
+T13,stronger,"킹스모닝 피로 완전 해결, 하루 만에 달라집니다",matched,P104,과장,official_claims P104,synthetic_example
+T14,stronger,루테인 눈이반짝 스틱 시력이 확 좋아져요,matched,P129,과장,official_claims P129,synthetic_example
+T15,treatment,오메가3이지 혈압약 대신 드세요,needs_review,P117,약 대체,official_claims P117,synthetic_example
+T16,treatment,세이헬스 루테인 백내장 예방·치료에 효과,needs_review,P126,질병 예방·치료,official_claims P126,synthetic_example
+T17,treatment,"간케어 프라임 밀크씨슬 간염 치료, 간수치 정상으로",needs_review,P134,질병 예방·치료,official_claims P134,synthetic_example
+T18,treatment,뼈건강 칼마디아 칼슘 마그네슘 비타민D 아연 골다공증 완치,needs_review,P122,질병 예방·치료,official_claims P122,synthetic_example
+T19,uncertain,홍삼정 스틱 3개월 먹고 혈당이 정상이 됐어요 (후기),needs_review,P101,후기·체험담,official_claims P101,synthetic_example
+T20,uncertain,홍삼정 앰플 프라임 면역력 증진에 도움,no_official_data,,,없음 (신고 목록에만 있음),synthetic_example
