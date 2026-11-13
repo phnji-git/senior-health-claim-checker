@@ -2,7 +2,10 @@
 import os
 from pathlib import Path
 from functools import lru_cache
-MODEL_DIR = Path(os.environ.get('OCR_MODEL_DIR', Path(__file__).resolve().parents[1] / 'models'))
+# 이 값보다 신뢰도가 낮은 글자 조각은 "다시 확인할 부분"으로 알려 준다.
+# 합성 이미지 3장 기준: 틀린 조각 0.32~0.58, 맞은 조각 0.62 이상. 실제 광고로 다시 맞출 것.
+LOW_CONF = 0.6
+MODEL_DIR =Path(os.environ.get('OCR_MODEL_DIR', Path(__file__).resolve().parents[1] / 'models'))
 
 @lru_cache(maxsize=1)
 def get_reader():
@@ -28,6 +31,7 @@ def read_text(image_bytes):
         text = ' '.join(p[1].strip() for p in parts if p[1].strip())
         conf = sum(float(p[2]) for p in parts)/len(parts)
         return {'text':text,'status':'ok' if len(text.replace(' ',''))>=5 and conf>=.5 else 'needs_review',
-                'confidence':conf,'error':''}
+                'confidence':conf,'error':'',
+                'low_conf':[p[1].strip() for p in parts if p[1].strip() and float(p[2])<LOW_CONF]}
     except Exception as e:
         return fail | {'error':type(e).__name__}

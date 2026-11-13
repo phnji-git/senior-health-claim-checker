@@ -68,3 +68,18 @@ def test_d_v3():
     rows=validate()
     assert len(rows)==20
     assert all(r['pass'] for r in rows)
+
+def test_registry_product_still_gets_expression_tags():
+    # 공식 문구가 없는 신고 목록 제품도 광고 문구만으로 표현 점검은 한다
+    ad='신비감다이어트는 타 다이어트 제품에 비해 약물에 의한 부작용이 없는 최상의 건강기능식품입니다'
+    r=analyze_claim(ad,search_candidates(ad)[0]['id'])
+    assert r['status']=='no_official_data' and not r['official_claims']
+    assert {'부작용 없음 주장','과장','다른 제품과 비교'} <= set(r['review_tags'])
+    assert all(e['expressions'] for e in r['review_evidence'])
+    assert '대조하지 않고' in r['difference_note']
+
+def test_ocr_low_confidence_parts():
+    b=BytesIO();Image.new('RGB',(100,100),'white').save(b,format='PNG')
+    with patch('src.ocr.get_reader') as reader:
+        reader.return_value.readtext.return_value=[(None,'홍심정',0.46),(None,'스틱',0.99)]
+        assert read_text(b.getvalue())['low_conf']==['홍심정']

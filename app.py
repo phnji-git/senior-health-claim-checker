@@ -71,6 +71,9 @@ with st.container(key='input_card'):
                     st.warning('사진에서 글자를 정확히 읽지 못했습니다. 아래에서 문구를 고치거나 제품명을 직접 입력해 주세요.')
                 else:
                     st.info('인식한 문구에 오타가 있을 수 있습니다. 이미지와 대조하고 아래에서 수정해 주세요.')
+                if ocr.get('low_conf'):
+                    st.warning('특히 다시 확인할 부분: '+' / '.join(ocr['low_conf']))
+                    st.caption('글자가 흐리게 읽힌 부분입니다. 여기에 없는 부분도 틀렸을 수 있어요.')
                 if ocr.get('error'):
                     st.caption('OCR 처리 상태: '+ocr['error']+' · README의 모델 준비 안내를 확인하세요.')
 
@@ -125,11 +128,13 @@ if st.session_state.get('result'):
             st.subheader('입력한 광고 문구')
             st.text(r['ad_text'])
             st.subheader('확인할 표현')
-            if not r['official_claims']:
-                st.write('공식 원문이 없어 표현 비교를 보류했습니다.')
-            elif r['review_tags']:
+            if r['review_tags']:
+                if not r['official_claims']:
+                    st.caption('공식 원문과 대조하지 않고 광고 문구만 본 점검입니다.')
                 for evidence in r.get('review_evidence',[]):
                     evidence_tag(evidence['tag'],' / '.join(evidence['expressions']) or '유사한 표현을 감지했습니다. 문구 전체를 확인하세요.')
+            elif not r['official_claims']:
+                st.write('규칙으로 찾은 표현 없음. 공식 원문이 없어 원문과의 비교는 하지 못했습니다.')
             else:
                 st.write('규칙으로 찾은 표현 없음 (문제없다는 의미는 아닙니다)')
         with right, st.container(key='official_card'):

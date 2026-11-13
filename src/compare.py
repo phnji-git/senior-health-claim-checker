@@ -13,7 +13,9 @@ DISEASE_PATTERN = re.compile(r"병에(좋|도움|효과)")                 # "~�
 # 공식 문구에 없는 병·증상 이름. "암"처럼 한 글자는 다른 낱말에 섞이므로 붙여 쓰는 꼴로만 적는다.
 DISEASE_NAMES = ["고혈압", "혈압", "당뇨", "치매", "관절염", "골다공증", "백내장", "녹내장", "간염",
                  "항암", "암예방", "암세포", "암환자", "심장병", "뇌졸중", "우울증", "불면증"]
-TAG_WORDS = {"무조건": "과장", "완벽": "과장", "확실": "단정 표현",
+COMPARE = r"(?:타|다른)\s*[^,.!?\n]{0,12}?제품\s*(?:에\s*비해|보다)"     # "타 다이어트 제품에 비해"
+NO_CLAIMS_TAG_NOTE = " 아래 '확인할 표현'은 공식 문구와 대조하지 않고 광고 문구만 본 점검입니다."
+TAG_WORDS = {"무조건": "과장", "완벽": "과장", "최상": "과장", "확실": "단정 표현",
              "책임": "단정 표현", "보장": "단정 표현", "틀림없": "단정 표현",
              "혈관청소": "혈관 청소·과장", "후기": "후기·체험담",
              "먹고": "후기·체험담"}                                  # 점검 표시일 뿐 판정이 아님
@@ -101,10 +103,7 @@ def analyze_claim(ad_text, product_id=None):
 
     product, rest = hit
     claims = product["claims"]
-    if not claims:
-        return _result("no_official_data", ad_text, product, words=words,
-                       message="신고 목록에서 찾은 후보입니다. 이 목록은 기능성 원문을 검수한 자료가 아닙니다. 현재 자료에 비교할 공식 문구가 없으며, 상세 출처 URL·확인일도 기록되어 있지 않습니다. 포장의 신고번호로 식품안전나라에서 확인해 주세요. 미검색은 불법 판정이 아닙니다.")
-
+    # 공식 문구가 없어도(신고 목록 후보) 표현 점검은 한다. 이때 official_all은 빈 글자라 질병 낱말을 빼 주지 못한다.
     official_all = norm(" ".join(claims))
     disease = [w for w in DISEASE_WORDS if w not in official_all and _has_word(ad, w)]
     if DISEASE_PATTERN.search(ad) and "병에" not in official_all:
@@ -123,14 +122,20 @@ def analyze_claim(ad_text, product_id=None):
         tags.append('과장')
     if '약대신' in ad:
         tags.append('약 대체')
+    if re.search(COMPARE, clean):
+        tags.append('다른 제품과 비교')
     if disease:
         tags = [t for t in tags if t not in DISEASE_WORDS]
         if any(t != '약대신' for t in disease):
             tags.append('질병 예방·치료')
     tags = list(dict.fromkeys(tags))
 
-    score = max(_coverage(rest, c) for c in claims)
-    if tags:
+    score = max((_coverage(rest, c) for c in claims), default=0.0)
+    if not claims:
+        status = "no_official_data"
+        msg = ("신고 목록에서 찾은 후보입니다. 이 목록은 기능성 원문을 검수한 자료가 아닙니다. 현재 자료에 비교할 공식 문구가 없으며, 상세 출처 URL·확인일도 기록되어 있지 않습니다. 포장의 신고번호로 식품안전나라에서 확인해 주세요. 미검색은 불법 판정이 아닙니다."
+               + (NO_CLAIMS_TAG_NOTE if tags else ""))
+    elif tags:
         status = "needs_review"
         msg = "부정·단정·치료·체험담 등 확인할 표현이 있습니다. 표시한 표현과 공식 원문을 함께 확인해 주세요. 표현 탐지는 제한된 규칙이며 이 비교만으로 위법 여부나 효과를 판단할 수 없습니다."
     elif score >= CLAIM_MATCH_SIM:
@@ -143,7 +148,8 @@ def analyze_claim(ad_text, product_id=None):
     evidence=[]
     patterns = {
         '반대·부정 문장':r'[^,.!?\n]{0,16}(?:없\w*|않\w*|아니\w*|못\w*|불가|안됨|안되\w*|안돼\w*)',
-        '과장':HUNDRED + r'|무조건|완벽|완전|하루\s*만에|확\s*좋아\w*|즉시|반드시',
+        '과장':HUNDRED + r'|무조건|완벽|완전|하루\s*만에|확\s*좋아\w*|즉시|반드시|최상\w*',
+        '다른 제품과 비교':COMPARE,
         '단정 표현':r'확실\w*|책임\w*|보장\w*|틀림\s*없\w*',
         '혈관 청소·과장':r'혈관\s*청소',
         '후기·체험담':r'후기|먹고',
