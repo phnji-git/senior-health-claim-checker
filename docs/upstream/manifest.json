@@ -1,0 +1,38 @@
+[
+  {
+    "file": "C_products_1111_v1.py",
+    "sha256": "f2355d9a1944dcc425251ef54c7724bb073ad1d736a880cc06d5197527b3cfc6"
+  },
+  {
+    "file": "C_compare_1111_v1.py",
+    "sha256": "fe61785f1e4f2e73e6504d18a45fb2b1852eeeb7cd8db2c5db9155ffb73c57f0"
+  },
+  {
+    "file": "C_test_compare_1111_v1.py",
+    "sha256": "f3ae4fbbb0030b1eaef16d6746f2b31524386f5b4494ba85f49d9b96c973a058"
+  },
+  {
+    "file": "C_test_results_1111_v1.csv",
+    "sha256": "236d80069270fe57d7061ef187dae6ac80c1c1718cce9ca64c2906f968a1467f"
+  },
+  {
+    "file": "B_ocr_1111_v1.py",
+    "sha256": "53def526faa207fe81c5aad00290b86c0cd092ff699391910cd5290e6243df41"
+  },
+  {
+    "file": "B_requirements_1111_v1.txt",
+    "sha256": "f1207ca30c905b2ce705f42de14b819eaeab316179b807b232b117b297fcfe07"
+  },
+  {
+    "file": "B_ocr_samples_1111_v1.csv",
+    "sha256": "521a3528b99779210de0a74250dfbbc3f2752123784795920931af2de29ec514"
+  },
+  {
+    "file": "D_synthetic_cases_1111_v3.xlsx",
+    "sha256": "5e94007864285e2cf9e422b372b5f96531e26383617e4d04a42ad70014268aee"
+  },
+  {
+    "file": "\uac74\uac15\uae30\ub2a5\uc2dd\ud488_\uad11\uace0\ud655\uc778\ub3c4\uc6b0\ubbf8_\ud300\uc2e4\ud589\uac00\uc774\ub4dc_v2.md",
+    "sha256": "797cf53918b3edcd34a3ac4d06a091828e5cd850f41f4f88fad650cdb3209a66"
+  }
+]

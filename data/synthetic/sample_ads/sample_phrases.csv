@@ -1,0 +1,8 @@
+﻿case_id,group,ad_text,expected_status,expected_product_id,expected_tag,expected_source,case_type
+S01,close,"홍삼정 스틱 면역력 증진, 피로개선에 도움을 줄 수 있음",matched,P101,,official_claims P101,synthetic_example
+S02,stronger,세이헬스 루테인 눈 건강 확실히 책임집니다! 황반색소밀도 유지,matched,P126,단정 표현,official_claims P126,synthetic_example
+S03,close,오메가3이지 혈행 개선·건조한 눈 개선에 도움을 줄 수 있음,matched,P117,,official_claims P117,synthetic_example
+S04,uncertain,비타하루 면역 젤리 먹는 순간 면역력 강화! 식약처 인증 영양제,no_product,,,없음,synthetic_example
+S05,uncertain,"눈번쩍 시력회복 환 시력 회복, 노안 개선 건강기능식품",no_product,,,없음,synthetic_example
+S06,treatment,홍삼정 스틱 당뇨·감기 예방에 탁월 먹으면 치료됩니다,needs_review,P101,질병 예방·치료,official_claims P101,synthetic_example
+S07,uncertain,세이헬스 루테인 ★★★★★ 구매 후기 먹고 두 달 만에 눈이 좋아졌어요!,needs_review,P126,후기·체험담,official_claims P126,synthetic_example

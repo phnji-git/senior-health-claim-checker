@@ -6,3 +6,5 @@ __pycache__/
 data/raw/
 *.log
 .DS_Store
+models/*.pth
+models/user_network/
